@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block page %}Home{% endblock %}
+
+{% block link%}
+<ul id="nav-mobile" class="right">
+    <li><a href="/logout">Logout</a></li>
+</ul>
+{% endblock %}
+
+{% block styles%}
+
+    .form-container {
+        display: flex;
+    }
+    
+    <!-- form {
+        margin-right: 10px; /* Adjust spacing between forms if needed */
+    } -->
+
+    td{
+        padding: 2px;
+    }
+
+    .collection-item{
+        background-color: #FFFFFF;
+        color: #000300;
+    }
+
+    .collection .collection-item.active{
+        background-color: #E53935;
+        color: #FFFFFF;
+    }
+
+    #captureBtn{
+        background-color: #E53935;
+        color: #FFFFFF;
+    }
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col m3 list-container collection" style="max-height: 88vh;">
+            <table>
+            {% for pokemon in pokemon %}
+                {% if pokemon.id == pokemon_id %}
+                    <tr>
+                        <a id= "poke-{{pokemon.id}}" class="collection-item active white-text" href="/app/{{pokemon.id}}">{{pokemon.name}}</pokemon></a>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <a id= "poke-{{pokemon.id}}" class="collection-item black-text" href="/app/{{pokemon.id}}">{{pokemon.name}}</pokemon></a>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+    </div>
+    
+    <div class="col m3">
+
+            <p class="text-center">Selected Pokemon</p>
+            {% for pokemon in pokemon %}   
+                {% if pokemon.id == pokemon_id %}
+                <div id="pokemon-detail">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon_id}}.png" alt="poke image {{pokemon_id}}" style="width: 400px;">
+                    <div>
+                        <div>
+                            <span class="card-title">{{pokemon.name}}</span>
+                        </div>
+                        <p>Type1: {{pokemon.type1}}</p>
+                        <p>Type2: {{pokemon.type2}}</p>
+                        <p>Weight: {{pokemon.weight}}</p>
+                        <p>Height: {{pokemon.height}}</p> 
+                    </div>
+                    <div>
+                        <form method="POST" action="/pokemon/{{pokemon.id}}">
+                            <div>
+                                <input id="pokemon_name" type="text" name="pokemon_name" placeholder="name">
+                            </div>              
+                            <div >
+                                <input id="captureBtn" type="submit" class="red text-white btn" value="CAPTURE">  
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+                {% endif %}  
+            {% endfor %}
+    </div>
+
+    <div class="col m6" >
+        <p class="text-center">Your Pokemon</p>
+        <table class="responsive-table" id="pokemon-table">
+            <!-- Captured pokemon content here -->
+            <thead>
+                <tr>
+                    <th>Pokemon</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for ownedPoke in current_user.pokemon %}
+                <tr style="height: 150px;">
+                    {% for poke in pokemon %}
+                        {% if poke.id == ownedPoke.pokemon_id %}
+                            <td>{{poke.name}}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ownedPoke.name}}</td> 
+                    <td>    
+                        <div class="form-container">
+                            <form method="POST" action="/rename-pokemon/{{ownedPoke.id}}">
+                                <input id="Benny_new-name" type="text" name="rename_pokemon" style="width: 250px;">
+                                <input id="rename_Benny" type="submit" class="blue text-white btn" value="RENAME">
+                            </form>
+                            <form method="GET" action="/release-pokemon/{{ownedPoke.id}}" style="align-content: space-around; padding-bottom: 3px;">
+                                <input id="release_Benny" type="submit" class="blue text-white btn" value="RELEASE">
+                            </form> 
+                        </div>  
+                    </td>   
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+{% endblock %}
