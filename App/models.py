@@ -81,7 +81,18 @@ class User(db.Model):
   #To String method
   def __repr__(self):
       return f'<User {self.id}: {self.username}>'
-
+    
+  def check_password_hash_for_user(user_id):
+    user = User.query.get(user_id)  # Fetch the user by their ID
+    if user:
+        print(f"User {user.username}'s password hash: {user.password}")
+        # Check if it starts with sha256$
+        if user.password.startswith('sha256$'):
+            print("Password is hashed with sha256")
+        else:
+            print("Password is NOT hashed with sha256")
+    else:
+        print("User not found")
 
   def get_json(self):
     return {
