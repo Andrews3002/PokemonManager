@@ -71,7 +71,7 @@ class User(db.Model):
   #hashes the password parameter and stores it in the object
   def set_password(self, password):
       """Create hashed password."""
-      self.password = generate_password_hash(password, method='sha256')
+      self.password = generate_password_hash(password, method='pbkdf2:sha256')
   
   #Returns true if the parameter is equal to the object’s password property
   def check_password(self, password):
@@ -87,10 +87,10 @@ class User(db.Model):
     if user:
         print(f"User {user.username}'s password hash: {user.password}")
         # Check if it starts with sha256$
-        if user.password.startswith('sha256$'):
-            print("Password is hashed with sha256")
+        if user.password.startswith('pbkdf2:sha256$'):
+            print("Password is hashed with pbkdf2:sha256$")
         else:
-            print("Password is NOT hashed with sha256")
+            print("Password is NOT hashed with pbkdf2:sha256$")
     else:
         print("User not found")
 
