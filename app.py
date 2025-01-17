@@ -1,4 +1,5 @@
 import os, csv
+from dotenv import load_dotenv
 import datetime
 from flask import Flask, request, redirect, render_template, url_for, flash
 from flask_cors import CORS
@@ -13,19 +14,22 @@ from flask_jwt_extended import (
 )
 from models import db, User, UserPokemon, Pokemon
 
-# Configure Flask App
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'MySecretKey'
-app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
-app.config['JWT_REFRESH_COOKIE_NAME'] = 'refresh_token'
-app.config["JWT_TOKEN_LOCATION"] = ["cookies", "headers"]
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=15)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['PREFERRED_URL_SCHEME'] = os.getenv('PREFERRED_URL_SCHEME')
+app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME')
+app.config['JWT_REFRESH_COOKIE_NAME'] = os.getenv('JWT_REFRESH_COOKIE_NAME')
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=1)
+app.config["JWT_TOKEN_LOCATION"] = os.getenv('JWT_TOKEN_LOCATION')
 app.config["JWT_COOKIE_SECURE"] = True
-app.config["JWT_SECRET_KEY"] = "super-secret"
+app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
-app.config['JWT_HEADER_NAME'] = "Cookie"
 
 
 # Initialize App 
